@@ -1,0 +1,35 @@
+#%RAML 1.0
+---
+title: University API
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/b6d70e12-24e6-45f1-b83f-e284ff8ea862/{version} # baseUri: http://api.myUniversity.com/{version}
+version: v1
+
+types:
+  group: !include groupType.raml
+  lesson: !include lessonType.raml
+  student: !include studentType.raml
+
+resourceTypes:
+  collection: !include collectionResource.raml
+  collection-item: !include collectionItem.raml
+
+/groups:
+  type:
+    collection:
+  /{groupName}:
+    type:
+      collection-item:
+
+/lessons:
+  type:
+    collection:
+  /{lessonName}:
+    type:
+      collection-item:
+
+/students:
+  type:
+    collection:
+  /{studentId}:
+    type:
+      collection-item:
