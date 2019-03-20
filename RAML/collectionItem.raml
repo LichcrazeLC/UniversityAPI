@@ -1,0 +1,45 @@
+#%RAML 1.0 ResourceType
+  description: Entity representing a <<resourcePathName|!singularize>>
+  get:
+    description: |
+      Get the <<resourcePathName|!singularize>>
+      with <<resourcePathName|!singularize>>Name =
+      {<<resourcePathName|!singularize>>Name}
+    responses:
+      200:
+        body:
+          application/json:
+            type: <<resourcePathName|!singularize>>
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "<<resourcePathName|!singularize>> not found" }
+  put:
+    queryParameters:
+      access_token:
+        displayName: Access Token
+        type: string
+        description: Token giving you permission to make call
+        required: true
+    body:
+      application/json:
+        type: <<resourcePathName|!singularize>>
+    responses:
+      200:
+        body:
+          application/json:
+            type: <<resourcePathName|!singularize>>
+  delete:
+    queryParameters:
+      access_token:
+        displayName: Access Token
+        type: string
+        description: Token giving you permission to make call
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {"message": "<<resourcePathName|!singularize>> successfully deleted" }
