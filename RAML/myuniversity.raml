@@ -1,7 +1,7 @@
 #%RAML 1.0
 ---
 title: University API
-baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/b6d70e12-24e6-45f1-b83f-e284ff8ea862/{version} # baseUri: http://api.myUniversity.com/{version}
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/5c299ef9-4d1e-41bb-9d2b-d78af16932cb/{version} # baseUri: http://api.myUniversity.com/{version}
 version: v1
 
 types:
@@ -12,6 +12,48 @@ types:
 resourceTypes:
   collection: !include collectionResource.raml
   collection-item: !include collectionItem.raml
+
+traits: 
+  returnsServerProblem:
+    responses: 
+      500:
+        body: 
+          application/json:
+            example: |
+              {"message":"Internal Server Error"}
+  returnsResourceCreatedMessage:
+    responses: 
+      200:
+        body: 
+          application/json:
+            example: |
+              {"message":"<<resourcePathName>> created!"}
+  returnsResource:
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: <<resourcePathName|!singularize>>
+  returnsResourceNotFound:
+    responses:
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "<<resourcePathName|!singularize>> not found" }
+  returnsCollection:
+    responses:
+      200:
+        body:
+          application/json:
+            type: <<resourcePathName|!singularize>>[]
+  returnsResourceDeleted:
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {"message": "<<resourcePathName|!singularize>> successfully deleted" }
 
 /groups:
   type:

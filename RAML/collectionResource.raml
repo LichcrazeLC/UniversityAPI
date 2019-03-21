@@ -2,11 +2,7 @@
   description: Collection of available <<resourcePathName>> in the API
   get:
     description: Get a list of <<resourcePathName>>.
-    responses:
-      200:
-        body:
-          application/json:
-            type: <<resourcePathName|!singularize>>[]
+    is: [returnsCollection]
   post:
     description: |
       Add a new <<resourcePathName|!singularize>> to the API.
@@ -19,9 +15,5 @@
     body:
       application/json:
         type: <<resourcePathName|!singularize>>
-    responses:
-      200:
-        body:
-          application/json:
-            type: <<resourcePathName|!singularize>>
+    is: [returnsResourceCreatedMessage]
                             

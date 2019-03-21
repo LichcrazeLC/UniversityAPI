@@ -5,16 +5,7 @@
       Get the <<resourcePathName|!singularize>>
       with <<resourcePathName|!singularize>>Name =
       {<<resourcePathName|!singularize>>Name}
-    responses:
-      200:
-        body:
-          application/json:
-            type: <<resourcePathName|!singularize>>
-      404:
-        body:
-          application/json:
-            example: |
-              {"message": "<<resourcePathName|!singularize>> not found" }
+    is: [returnsResource, returnsResourceNotFound]
   put:
     queryParameters:
       access_token:
@@ -25,11 +16,7 @@
     body:
       application/json:
         type: <<resourcePathName|!singularize>>
-    responses:
-      200:
-        body:
-          application/json:
-            type: <<resourcePathName|!singularize>>
+    is: [returnsResource, returnsResourceNotFound]
   delete:
     queryParameters:
       access_token:
@@ -37,9 +24,4 @@
         type: string
         description: Token giving you permission to make call
         required: true
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              {"message": "<<resourcePathName|!singularize>> successfully deleted" }
+    is: [returnsResourceDeleted, returnsResourceNotFound]
