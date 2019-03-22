@@ -21,13 +21,6 @@ traits:
           application/json:
             example: |
               {"message":"Internal Server Error"}
-  returnsResourceCreatedMessage:
-    responses: 
-      200:
-        body: 
-          application/json:
-            example: |
-              {"message":"<<resourcePathName>> created!"}
   returnsResource:
     responses: 
       200:
@@ -54,6 +47,13 @@ traits:
           application/json:
             example: |
               {"message": "<<resourcePathName|!singularize>> successfully deleted" }
+  returnsResourceCreated:
+    responses:
+      201:
+        body:
+          application/json:
+            example: |
+              {"message": "<<resourcePathName|!singularize>> successfully created!" }
 
 /groups:
   type:
