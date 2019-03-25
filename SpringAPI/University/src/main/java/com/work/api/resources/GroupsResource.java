@@ -1,58 +1,48 @@
 package com.work.api.resources;
 
 import com.work.api.models.Group;
-import com.work.api.models.Student;
+import com.work.api.repositories.GroupRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.Valid;
 
 @RestController
 public class GroupsResource {
 
-    private static Map<String, Group> groupRepo = new HashMap<>();
-
-    static{
-        Group faf171 = new Group( 1, "FAF-171", "Computers, Informatics and Microelectronics",
-                "Software Engineering",
-                new Student[]{
-                        new Student(10, "Filip Adrian"),
-                }
-        );
-        Group faf172 = new Group( 2, "FAF-172", "Computers, Informatics and Microelectronics",
-                "Software Engineering",
-                new Student[]{
-                        new Student(11, "Eugen Chiseliov"),
-                }
-        );
-        groupRepo.put(faf171.getGroupName(), faf171);
-        groupRepo.put(faf172.getGroupName(), faf172);
-
-    }
+    @Autowired
+    private GroupRepository groupRepository;
 
     @RequestMapping("/groups")
     public ResponseEntity<Object> getGroups() {
-        return new ResponseEntity<>(groupRepo.values(), HttpStatus.OK);
+        return new ResponseEntity<>(groupRepository.findAll(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/groups", method = RequestMethod.POST)
-    public ResponseEntity<Object> postGroup(@RequestBody Group group) {
-        groupRepo.put(group.getGroupName(), group);
+    public ResponseEntity<Object> postGroup(@Valid @RequestBody Group group) {
+        groupRepository.save(group);
         return new ResponseEntity<>("Group created successfully!", HttpStatus.CREATED);
     }
 
     @RequestMapping("/groups/{groupName}")
     public ResponseEntity<Object> getGroupByName(@PathVariable String groupName) {
-        return new ResponseEntity<>(groupRepo.get(groupName), HttpStatus.OK);
+        if (groupRepository.findByName(groupName) != null)
+            return new ResponseEntity<>(groupRepository.findByName(groupName), HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Group not found!", HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(value = "/groups/{groupName}", method = RequestMethod.PUT)
     public ResponseEntity<Object> putGroupByName(@PathVariable String groupName, @RequestBody Group group) {
-        if (groupRepo.containsKey(groupName)) {
-            groupRepo.put(groupName, group);
-            return new ResponseEntity<>(groupRepo.get(groupName), HttpStatus.OK);
+        Group oldRecord = groupRepository.findByName(groupName);
+        if (oldRecord != null) {
+            oldRecord.setName(group.getName());
+            oldRecord.setFaculty(group.getFaculty());
+            oldRecord.setSpecialty(group.getSpecialty());
+            groupRepository.save(oldRecord);
+            return new ResponseEntity<>(group, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Group not found!", HttpStatus.NOT_FOUND);
         }
@@ -60,8 +50,8 @@ public class GroupsResource {
 
     @RequestMapping(value = "/groups/{groupName}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteGroupByName(@PathVariable String groupName) {
-        if (groupRepo.containsKey(groupName)) {
-            groupRepo.remove(groupName);
+        if (groupRepository.findByName(groupName) != null) {
+            groupRepository.delete(groupRepository.findByName(groupName));
             return new ResponseEntity<>("Group successfully deleted!", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Group not found!", HttpStatus.NOT_FOUND);

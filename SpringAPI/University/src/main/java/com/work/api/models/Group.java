@@ -1,34 +1,48 @@
 package com.work.api.models;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
+@Entity
+@Table(name = "`groups`")
 public class Group {
-    private int groupId;
-    private String groupName;
-    private String faculty;
-    private String specialty;
-    private Student[] students;
 
-    public Group(int groupId, String groupName, String faculty, String specialty, Student[] students) {
-        this.groupId = groupId;
-        this.groupName = groupName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private long Id;
+    @NotBlank
+    @Column(unique = true)
+        private String name;
+    @NotBlank
+        private String faculty;
+    @NotBlank
+        private String specialty;
+        private Student[] students;
+
+    public Group(){
+        //DEFAULT
+    }
+
+    public Group(long id, @NotBlank String name, @NotBlank String faculty, @NotBlank String specialty) {
+        this.Id = id;
+        this.name = name;
         this.faculty = faculty;
         this.specialty = specialty;
-        this.students = students;
     }
 
-    public int getGroupId() {
-        return groupId;
+    public long getId() {
+        return Id;
     }
 
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
+    public void setId(long id) {
+        Id = id;
     }
 
-    public String getGroupName() {
-        return groupName;
+    public String getName() {
+        return name;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getFaculty() {
