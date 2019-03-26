@@ -1,59 +1,67 @@
 package com.work.api.resources;
 
+import com.work.api.exceptions.ResourceNotFoundException;
 import com.work.api.models.Student;
+import com.work.api.repositories.GroupRepository;
+import com.work.api.repositories.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.Valid;
 
 @RestController
 public class StudentsResource {
 
-    private static Map<Integer, Student> studentRepo = new HashMap<>();
+    @Autowired
+    private StudentRepository studentRepository;
 
-    static{
-        Student adrian = new Student(10, "Filip Adrian");
-        Student eugen = new Student(11, "Eugen Chiseliov");
-        studentRepo.put(adrian.getStudentId(), adrian);
-        studentRepo.put(eugen.getStudentId(), eugen);
+    @Autowired
+    private GroupRepository groupRepository;
+
+    @RequestMapping("/groups/{groupName}/students")
+    public ResponseEntity<Object> getStudents(@PathVariable String groupName) {
+        if (groupRepository.existsByName(groupName))
+            return new ResponseEntity<>(studentRepository.findAllByGroupName(groupName), HttpStatus.OK);
+        else
+            throw new ResourceNotFoundException("Group not found with Name " + groupName + " and group name " + groupName);
     }
 
-    @RequestMapping("/students")
-    public ResponseEntity<Object> getStudents() {
-        return new ResponseEntity<>(studentRepo.values(), HttpStatus.OK);
+    @RequestMapping(value = "/groups/{groupName}/students", method = RequestMethod.POST)
+    public Student postStudent(@PathVariable String groupName, @Valid @RequestBody Student student) {
+        return groupRepository.findByName(groupName).map(group -> {
+            student.setGroup(group);
+            return studentRepository.save(student);
+        }).orElseThrow(() -> new ResourceNotFoundException("Group name " + groupName + " not found"));
     }
 
-    @RequestMapping(value = "/students", method = RequestMethod.POST)
-    public ResponseEntity<Object> postStudent(@RequestBody Student student) {
-        studentRepo.put(student.getStudentId(), student);
-        return new ResponseEntity<>("Student created successfully!", HttpStatus.CREATED);
+    @RequestMapping("groups/{groupName}/students/{studentId}")
+    public ResponseEntity<Object> getStudentById(@PathVariable String groupName, @PathVariable Long studentId) {
+        if (studentRepository.findByGroupNameAndId(groupName, studentId).isPresent())
+            return new ResponseEntity<>(studentRepository.findByGroupNameAndId(groupName, studentId), HttpStatus.OK);
+        else
+            throw new ResourceNotFoundException("Student not found with Id " + studentId + " from Group " + groupName);
     }
 
-    @RequestMapping("/students/{studentId}")
-    public ResponseEntity<Object> getStudentById(@PathVariable int studentId) {
-        return new ResponseEntity<>(studentRepo.get(studentId), HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/students/{studentId}", method = RequestMethod.PUT)
-    public ResponseEntity<Object> putStudentById(@PathVariable int studentId, @RequestBody Student student) {
-        if (studentRepo.containsKey(studentId)) {
-            studentRepo.put(studentId, student);
-            return new ResponseEntity<>(studentRepo.get(studentId), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Student not found!", HttpStatus.NOT_FOUND);
+    @RequestMapping(value = "groups/{groupName}/students/{studentId}", method = RequestMethod.PUT)
+    public Student putStudentById(@PathVariable String groupName, @PathVariable Long studentId, @RequestBody Student student) {
+        if(!groupRepository.existsByName(groupName)) {
+            throw new ResourceNotFoundException("Group " + groupName + " not found");
         }
+        return studentRepository.findById(studentId).map(st -> {
+            st.setFullName(student.getFullName());
+            return studentRepository.save(st);
+        }).orElseThrow(() -> new ResourceNotFoundException("StudentId " + studentId + " not found"));
     }
 
-    @RequestMapping(value = "/students/{studentId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteStudentById(@PathVariable int studentId) {
-        if (studentRepo.containsKey(studentId)) {
-            studentRepo.remove(studentId);
-            return new ResponseEntity<>("Student successfully deleted!", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Student not found!", HttpStatus.NOT_FOUND);
-        }
+    @RequestMapping(value = "groups/{groupName}/students/{studentId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteStudentById(@PathVariable String groupName, @PathVariable Long studentId) {
+        return studentRepository.findByGroupNameAndId(groupName, studentId).map(student -> {
+            studentRepository.delete(student);
+            return new  ResponseEntity<Object>("Student deleted!", HttpStatus.OK);
+        }).orElseThrow(() -> new ResourceNotFoundException("Student not found with Id " + studentId + " and group name " + groupName));
     }
 
 }
+

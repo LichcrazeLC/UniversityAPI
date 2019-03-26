@@ -5,10 +5,9 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name = "`groups`")
 public class Group {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private long Id;
+        private long id;
     @NotBlank
     @Column(unique = true)
         private String name;
@@ -16,25 +15,24 @@ public class Group {
         private String faculty;
     @NotBlank
         private String specialty;
-        private Student[] students;
 
     public Group(){
         //DEFAULT
     }
 
     public Group(long id, @NotBlank String name, @NotBlank String faculty, @NotBlank String specialty) {
-        this.Id = id;
+        this.id = id;
         this.name = name;
         this.faculty = faculty;
         this.specialty = specialty;
     }
 
     public long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getName() {
@@ -61,11 +59,4 @@ public class Group {
         this.specialty = specialty;
     }
 
-    public Student[] getStudents() {
-        return students;
-    }
-
-    public void setStudents(Student[] students) {
-        this.students = students;
-    }
 }

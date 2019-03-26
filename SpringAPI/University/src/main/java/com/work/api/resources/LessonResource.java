@@ -14,15 +14,6 @@ import java.util.Map;
 public class LessonResource {
     private static Map< Integer, Lesson> lessonRepo = new HashMap<>();
 
-    static{
-        Lesson dataStructures = new Lesson(1,"Data Structures and Algorithms",
-                "Computers, Informatics and Microelectronics", "Software Engineering", 1);
-        Lesson internetOfThings = new Lesson(2,"Internet of Things",
-                "Computers, Informatics and Microelectronics", "Software Engineering",3);
-        lessonRepo.put(dataStructures.getLessonId(), dataStructures);
-        lessonRepo.put(internetOfThings.getLessonId(), internetOfThings);
-    }
-
     @RequestMapping("/lessons")
     public ResponseEntity<Object> getStudents() {
         return new ResponseEntity<>(lessonRepo.values(), HttpStatus.OK);
@@ -30,7 +21,7 @@ public class LessonResource {
 
     @RequestMapping(value = "/lessons", method = RequestMethod.POST)
     public ResponseEntity<Object> postLesson(@RequestBody Lesson lesson) {
-        lessonRepo.put(lesson.getLessonId(),lesson);
+       // lessonRepo.put(lesson.getLessonId(),lesson);
         return new ResponseEntity<>("Lesson created successfully!", HttpStatus.CREATED);
     }
 

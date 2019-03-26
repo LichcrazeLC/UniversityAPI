@@ -1,34 +1,48 @@
 package com.work.api.models;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+
+@Entity
+@Table(name = "lessons")
 public class Lesson {
-    private int lessonId;
-    private String lessonName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long Id;
+    @NotBlank
+    private String name;
+    @NotBlank
     private String faculty;
+    @NotBlank
     private String specialty;
+    @NotBlank
     private int year;
 
-    public Lesson(int lessonId, String lessonName, String faculty, String specialty, int year) {
-        this.lessonId = lessonId;
-        this.lessonName = lessonName;
+    public Lesson(){
+        //DEFAULT
+    }
+    public Lesson(long id, @NotBlank String name, @NotBlank String faculty, @NotBlank String specialty, @NotBlank int year) {
+        Id = id;
+        this.name = name;
         this.faculty = faculty;
         this.specialty = specialty;
         this.year = year;
     }
 
-    public int getLessonId() {
-        return lessonId;
+    public long getId() {
+        return Id;
     }
 
-    public void setLessonId(int lessonId) {
-        this.lessonId = lessonId;
+    public void setId(long id) {
+        Id = id;
     }
 
-    public String getLessonName() {
-        return lessonName;
+    public String getName() {
+        return name;
     }
 
-    public void setLessonName(String lessonName) {
-        this.lessonName = lessonName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getFaculty() {

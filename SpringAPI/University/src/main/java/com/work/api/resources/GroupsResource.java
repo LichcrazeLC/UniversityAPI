@@ -1,5 +1,6 @@
 package com.work.api.resources;
 
+import com.work.api.exceptions.ResourceNotFoundException;
 import com.work.api.models.Group;
 import com.work.api.repositories.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,15 @@ public class GroupsResource {
 
     @RequestMapping("/groups/{groupName}")
     public ResponseEntity<Object> getGroupByName(@PathVariable String groupName) {
-        if (groupRepository.findByName(groupName) != null)
-            return new ResponseEntity<>(groupRepository.findByName(groupName), HttpStatus.OK);
+        if (groupRepository.getByName(groupName) != null)
+            return new ResponseEntity<>(groupRepository.getByName(groupName), HttpStatus.OK);
         else
-            return new ResponseEntity<>("Group not found!", HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Group name " + groupName + " not found");
     }
 
     @RequestMapping(value = "/groups/{groupName}", method = RequestMethod.PUT)
     public ResponseEntity<Object> putGroupByName(@PathVariable String groupName, @RequestBody Group group) {
-        Group oldRecord = groupRepository.findByName(groupName);
+        Group oldRecord = groupRepository.getByName(groupName);
         if (oldRecord != null) {
             oldRecord.setName(group.getName());
             oldRecord.setFaculty(group.getFaculty());
@@ -44,17 +45,17 @@ public class GroupsResource {
             groupRepository.save(oldRecord);
             return new ResponseEntity<>(group, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Group not found!", HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Group name " + groupName + " not found");
         }
     }
 
     @RequestMapping(value = "/groups/{groupName}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteGroupByName(@PathVariable String groupName) {
-        if (groupRepository.findByName(groupName) != null) {
-            groupRepository.delete(groupRepository.findByName(groupName));
+        if (groupRepository.getByName(groupName) != null) {
+            groupRepository.delete(groupRepository.getByName(groupName));
             return new ResponseEntity<>("Group successfully deleted!", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Group not found!", HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Group name " + groupName + " not found");
         }
     }
 
