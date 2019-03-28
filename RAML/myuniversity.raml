@@ -61,17 +61,18 @@ traits:
   /{groupName}:
     type:
       collection-item:
+    /lessons:
+      type:
+        collection:
+      /{lessonId}:
+        type:
+          collection-item:
+    /students:
+      type:
+        collection:
+      /{studentId}:
+        type:
+          collection-item:
 
-/lessons:
-  type:
-    collection:
-  /{lessonName}:
-    type:
-      collection-item:
 
-/students:
-  type:
-    collection:
-  /{studentId}:
-    type:
-      collection-item:
+
