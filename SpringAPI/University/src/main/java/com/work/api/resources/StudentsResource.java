@@ -25,7 +25,7 @@ public class StudentsResource {
         if (groupRepository.existsByName(groupName))
             return new ResponseEntity<>(studentRepository.findAllByGroupName(groupName), HttpStatus.OK);
         else
-            throw new ResourceNotFoundException("Group not found with Name " + groupName + " and group name " + groupName);
+            throw new ResourceNotFoundException("Group not found with Name " + groupName);
     }
 
     @RequestMapping(value = "/groups/{groupName}/students", method = RequestMethod.POST)

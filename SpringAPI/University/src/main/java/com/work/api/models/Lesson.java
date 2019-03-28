@@ -2,39 +2,45 @@ package com.work.api.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "lessons")
 public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long Id;
+    private long id;
     @NotBlank
     private String name;
     @NotBlank
     private String faculty;
     @NotBlank
     private String specialty;
-    @NotBlank
+    @NotNull
     private int year;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "group_id", nullable = false)
+    private Group group;
 
     public Lesson(){
         //DEFAULT
     }
-    public Lesson(long id, @NotBlank String name, @NotBlank String faculty, @NotBlank String specialty, @NotBlank int year) {
-        Id = id;
+
+    public Lesson(long id, String name, String faculty, String specialty, int year, Group group) {
+        this.id = id;
         this.name = name;
         this.faculty = faculty;
         this.specialty = specialty;
         this.year = year;
+        this.group = group;
     }
 
     public long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getName() {
@@ -67,5 +73,13 @@ public class Lesson {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }
