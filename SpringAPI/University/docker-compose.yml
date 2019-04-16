@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  mysql-docker-container:
+    image: mysql:8.0.14
+    networks:
+      - uni-api-network
+    environment:
+      - MYSQL_DATABASE=universitydb
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=mystrongpass1
+      - MYSQL_PASSWORD=mystrongpass1
+    volumes:
+      - /data/mysql
+  spring-boot-jpa-app:
+    image: spring-boot-jpa-image
+    networks:
+      - uni-api-network
+    environment:
+      - MYSQL_DATASOURCE=jdbc:mysql://mysql-docker-container/universitydb?useSSL=false&allowPublicKeyRetrieval=true
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=mystrongpass1
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql-docker-container
+    ports:
+      - 8080:8080
+    volumes:
+      - /data/spring-boot-app
+
+networks:
+  uni-api-network:
